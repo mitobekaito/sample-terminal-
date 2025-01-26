@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>本人確認 - マイナンバー認証</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- ステップ1: 基本情報入力 -->
+        <div class="step active" id="step1">
+            <h1>本人確認 - 基本情報</h1>
+            <div class="progress-bar">
+                <div class="progress" style="width: 33%"></div>
+            </div>
+
+            <form id="basic-info-form">
+                <div class="form-group">
+                    <label>お名前（漢字）<span class="required">*</span></label>
+                    <input type="text" required placeholder="例：佐々木　穂高">
+                </div>
+
+                <div class="form-group">
+                    <label>お名前（フリガナ）<span class="required">*</span></label>
+                    <input type="text" required placeholder="例：ササキ　ホダカ">
+                </div>
+
+                <div class="form-group">
+                    <label>生年月日<span class="required">*</span></label>ホダカ
+                    <input type="text" required placeholder="例：2004年2月9日">
+                </div>
+
+                <div class="form-group">
+                    <label>メールアドレス<span class="required">*</span></label>
+                    <input type="email" required placeholder="例：bp22010@sic.shibaura-it.ac.jp">
+                </div>
+
+                <div class="form-group">
+                    <label>電話番号<span class="required">*</span></label>
+                    <input type="tel" required placeholder="例：080-3406-0370">
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="next-btn" onclick="nextStep(1)">次へ進む</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- ステップ2: マイナンバー入力 -->
+        <div class="step" id="step2">
+            <h1>本人確認 - マイナンバー情報</h1>
+            <div class="progress-bar">
+                <div class="progress" style="width: 66%"></div>
+            </div>
+
+            <div class="security-notice">
+                <strong>🔒 セキュリティ通知</strong>
+                <p>入力いただいた情報は、SSL暗号化通信により保護されています。</p>
+            </div>
+
+            <form id="mynumber-form">
+                <div class="form-group">
+                    <label>マイナンバー（12桁）<span class="required">*</span></label>
+                    <input type="text" 
+                           class="my-number-input" 
+                           required 
+                           pattern="\d{12}"
+                           maxlength="12"
+                           placeholder="123456789012">
+                    <p class="hint-text">半角数字12桁で入力してください</p>
+                </div>
+
+                <div class="form-group">
+                    <label>マイナンバーカード暗証番号（4桁）<span class="required">*</span></label>
+                    <input type="password" 
+                           required 
+                           pattern="\d{4}"
+                           maxlength="4"
+                           placeholder="****">
+                    <p class="hint-text">数字4桁で入力してください</p>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="back-btn" onclick="prevStep(2)">戻る</button>
+                    <button type="button" class="next-btn" onclick="nextStep(2)">確認コード入力</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- ステップ3: 確認コード入力 -->
+        <div class="step" id="step3">
+            <h1>ワンタイムパスワード入力画面</h1>
+            <div class="progress-bar">
+                <div class="progress" style="width: 100%"></div>
+            </div>
+
+            <form id="verification-code-form">
+                <p class="hint-text" style="text-align: center">
+                    登録されたメールアドレスに送信された6桁の確認コードを入力してください。
+                </p>
+
+                <div class="verification-code">
+                    <input type="text" maxlength="1" pattern="\d" required>
+                    <input type="text" maxlength="1" pattern="\d" required>
+                    <input type="text" maxlength="1" pattern="\d" required>
+                    <input type="text" maxlength="1" pattern="\d" required>
+                    <input type="text" maxlength="1" pattern="\d" required>
+                    <input type="text" maxlength="1" pattern="\d" required>
+                </div>
+
+                <p class="hint-text" style="text-align: center; margin-top: 20px">
+                    確認コードの有効期限は315分です
+                </p>
+
+                <div class="button-group">
+                    <button type="button" class="back-btn" onclick="prevStep(3)">戻る</button>
+                    <button type="submit" class="next-btn">認証を完了</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function nextStep(currentStep) {
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            document.getElementById(`step${currentStep + 1}`).classList.add('active');
+        }
+
+        function prevStep(currentStep) {
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            document.getElementById(`step${currentStep - 1}`).classList.add('active');
+        }
+
+        // 確認コード入力のフォーカス移動
+        const codeInputs = document.querySelectorAll('.verification-code input');
+        codeInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value && index < codeInputs.length - 1) {
+                    codeInputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    codeInputs[index - 1].focus();
+                }
+            });
+        });
+
+        // フォーム送信
+        document.getElementById('verification-code-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('本人確認が完了しました。');
+        });
+    </script>
+</body>
+</html>
